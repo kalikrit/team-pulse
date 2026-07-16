@@ -8,19 +8,21 @@
     font-size: 14px;
   ">
     <p>
-      Team Pulse 
+      {{ appName }}
       <span style="background: #edf2f7; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
         v{{ version }}
       </span>
     </p>
     <p style="font-size: 12px; margin-top: 4px;">
-      © 2026 — Все права защищены
+      © {{ currentYear }} — Все права защищены
     </p>
   </footer>
 </template>
 
 <script setup lang="ts">
-import packageJson from '~/package.json'
+import { VERSION, APP_NAME } from '~/config/version'
 
-const version = packageJson.version
+const version = VERSION
+const appName = APP_NAME
+const currentYear = new Date().getFullYear()
 </script>
