@@ -1,0 +1,8 @@
+:root {
+  --primary: #667eea;
+  --primary-dark: #5a67d8;
+  --bg-secondary: #f7fafc;
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+}
