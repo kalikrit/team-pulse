@@ -1,21 +1,24 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "name": "team-pulse",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
-    "start": "nuxt start"
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "version:patch": "npm version patch --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git push",
+    "version:minor": "npm version minor --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git push",
+    "version:major": "npm version major --no-git-tag-version && git add package.json && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git push"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "@pinia/nuxt": "^1.0.1",
     "nuxt": "^3.12.4",
-    "pinia": "^4.0.2",
-    "vue": "^3.4.21"
+    "@pinia/nuxt": "^0.5.4",
+    "pinia": "^2.1.7"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest"
   }
 }
