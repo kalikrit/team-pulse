@@ -24,6 +24,8 @@ project/
 │   └── default.vue      # Основной лейаут
 ├── assets/
 │   └── css/             # Стили
+├── config/
+│   └── version.ts       # Версия приложения (автогенерация)
 └── server/              # API (Nitro)
 ```
 
@@ -31,7 +33,7 @@ project/
 
 ```bash
 # Клонируем репозиторий
-git clone https://github.com/your-username/team-pulse.git
+git clone https://github.com/kalikrit/team-pulse.git
 
 # Переходим в папку проекта
 cd team-pulse
@@ -50,6 +52,31 @@ http://localhost:3000
 
 - `/` — Главная страница
 - `/dashboard` — Дашборд
+
+## 🏷️ Версионность
+
+Версия приложения автоматически синхронизируется между `package.json` и `config/version.ts`.
+
+### Обновление версии
+
+```bash
+# Исправление багов (0.2.0 → 0.2.1)
+npm run version:patch
+
+# Новая функциональность (0.2.0 → 0.3.0)
+npm run version:minor
+
+# Крупные изменения (0.2.0 → 1.0.0)
+npm run version:major
+```
+
+**Как это работает:**
+1. Команда обновляет `version` в `package.json`
+2. Автоматически запускается скрипт `scripts/update-version.js`
+3. Скрипт генерирует актуальный `config/version.ts`
+4. Изменения коммитятся и пушатся в репозиторий
+
+Версия отображается в футере всех страниц.
 
 ## 📄 Лицензия
 

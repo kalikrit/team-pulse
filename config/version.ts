@@ -1,3 +1,3 @@
 // Автоматически генерируется из package.json
 export const VERSION = '0.2.0'
-export const APP_NAME = 'Team Pulse'
+export const APP_NAME = 'team-pulse'
