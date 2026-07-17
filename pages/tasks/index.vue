@@ -68,6 +68,12 @@ const completedTasks = computed(() => taskStore.completedTasks)
 const pendingTasks = computed(() => taskStore.pendingTasks)
 
 const newTaskTitle = ref('')
+const loading = computed(() => taskStore.loading)
+
+// Загружаем задачи при монтировании страницы
+onMounted(() => {
+  taskStore.fetchTasks()
+})
 
 const addTask = () => {
   if (newTaskTitle.value.trim()) {

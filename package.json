@@ -17,12 +17,16 @@
     "version:major": "npm version major --no-git-tag-version && node scripts/update-version.js && git add . && git commit -m \"chore: bump version to $(node -p \"require('./package.json').version\")\" && git push"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
     "@pinia/nuxt": "^0.5.4",
+    "drizzle-orm": "^0.45.2",
     "nuxt": "^3.12.4",
     "pinia": "^2.1.7"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/node": "^26.1.1",
+    "drizzle-kit": "^0.31.10",
     "vite": "^5.4.21"
   }
 }
