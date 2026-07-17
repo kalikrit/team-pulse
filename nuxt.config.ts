@@ -7,6 +7,14 @@ export default defineNuxtConfig({
     '~/assets/css/variables.css',
   ],
 
+  modules: [
+    '@pinia/nuxt',
+  ],
+
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
+
   nitro: {
     preset: 'node-server',
   },
