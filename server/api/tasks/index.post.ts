@@ -1,17 +1,9 @@
-import { db } from '~/server/database/client'
-import { tasks } from '~/server/database/schema'
+import { taskService } from '~/server/services/taskService'
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
-    const newTask = await db.insert(tasks).values({
-      title: body.title,
-      description: body.description || null,
-      priority: body.priority || 'medium',
-      deadline: body.deadline || null,
-      completed: false,
-    }).returning()
-    return newTask[0]
+    return await taskService.create(body)
   } catch (error: any) {
     throw createError({
       statusCode: 500,

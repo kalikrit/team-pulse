@@ -1,20 +1,14 @@
-import { db } from '~/server/database/client'
-import { tasks } from '~/server/database/schema'
-import { eq } from 'drizzle-orm'
+import { taskService } from '~/server/services/taskService'
 
 export default defineEventHandler(async (event) => {
-  const id = Number(event.context.params?.id)
-  const body = await readBody(event)
-  
-  const updated = await db.update(tasks)
-    .set({
-      title: body.title,
-      description: body.description,
-      priority: body.priority,
-      deadline: body.deadline,
-      completed: body.completed,
+  try {
+    const id = Number(event.context.params?.id)
+    const body = await readBody(event)
+    return await taskService.update(id, body)
+  } catch (error: any) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: error.message || 'Failed to update task',
     })
-    .where(eq(tasks.id, id))
-    .returning()
-  return updated[0]
+  }
 })
