@@ -240,15 +240,10 @@ const toggleTask = (id: number) => {
   taskStore.toggleTask(id)
 }
 
+// ✅ Улучшенная функция открытия модалки
 const openEditModal = (task: any) => {
-  editTask.value = {
-    id: task.id,
-    title: task.title,
-    description: task.description || '',
-    priority: task.priority || 'medium',
-    deadline: task.deadline || '',
-    completed: task.completed,
-  }
+  const { id, title, completed, description = '', priority = 'medium', deadline = '' } = task
+  editTask.value = { id, title, completed, description, priority, deadline }
   isEditModalOpen.value = true
 }
 
