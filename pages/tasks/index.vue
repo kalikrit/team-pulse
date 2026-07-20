@@ -1,58 +1,78 @@
 <template>
-  <div style="padding:20px;max-width:800px;margin:0 auto;">
-    <h2>📋 Задачи</h2>
-    <p style="color:#4a5568;">Управляйте своими задачами</p>
-
-    <!-- Статистика -->
-    <div style="display:flex;gap:20px;margin:16px 0;flex-wrap:wrap;">
-      <span>Всего: {{ totalTasks }}</span>
-      <span style="color:#48bb78;">Выполнено: {{ completedTasks }}</span>
-      <span style="color:#fc8181;">Активных: {{ pendingTasks }}</span>
+  <div style="max-width:900px;margin:0 auto;padding:20px;">
+    <!-- Заголовок -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <h1 style="font-size:28px;font-weight:700;color:#2d3748;margin:0;">📋 Задачи</h1>
+      <span style="font-size:16px;color:#a0aec0;">Управляйте своими задачами</span>
     </div>
 
-    <!-- Форма добавления -->
-    <div style="margin:20px 0;padding:20px;background:#f7fafc;border-radius:8px;">
-      <div style="display:flex;flex-direction:column;gap:12px;">
+    <!-- Статистика -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:20px 0 30px;">
+      <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#2d3748;">{{ totalTasks }}</div>
+        <div style="font-size:14px;color:#718096;">Всего</div>
+      </div>
+      <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#48bb78;">{{ completedTasks }}</div>
+        <div style="font-size:14px;color:#718096;">Выполнено</div>
+      </div>
+      <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#fc8181;">{{ pendingTasks }}</div>
+        <div style="font-size:14px;color:#718096;">Активных</div>
+      </div>
+    </div>
+
+    <!-- Карточка формы добавления -->
+    <div style="background:white;padding:24px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:30px;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
         <div>
-          <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Название *</label>
+          <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Название *</label>
           <input
             v-model="newTask.title"
             placeholder="Введите название задачи"
-            style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+            style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;transition:border-color 0.2s;"
+            @focus="$event.target.style.borderColor='#667eea'"
+            @blur="$event.target.style.borderColor='#e2e8f0'"
           />
         </div>
         <div>
-          <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Описание</label>
+          <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Описание</label>
           <textarea
             v-model="newTask.description"
             placeholder="Подробное описание (опционально)"
-            style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;min-height:80px;"
+            style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;min-height:80px;transition:border-color 0.2s;resize:vertical;"
+            @focus="$event.target.style.borderColor='#667eea'"
+            @blur="$event.target.style.borderColor='#e2e8f0'"
           />
         </div>
-        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div style="display:flex;flex-wrap:wrap;gap:16px;">
           <div style="flex:1;min-width:150px;">
-            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Приоритет</label>
-            <select v-model="newTask.priority" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;">
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Приоритет</label>
+            <select v-model="newTask.priority" style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;background:white;">
               <option value="low">🟢 Низкий</option>
               <option value="medium">🟡 Средний</option>
               <option value="high">🔴 Высокий</option>
             </select>
           </div>
           <div style="flex:1;min-width:150px;">
-            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Дедлайн</label>
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Дедлайн</label>
             <input
               v-model="newTask.deadline"
               type="date"
-              style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+              style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;"
             />
           </div>
+          <div style="flex:1;min-width:150px;display:flex;align-items:flex-end;">
+            <button
+              @click="addTask"
+              :disabled="!newTask.title.trim()"
+              style="width:100%;padding:10px 24px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:background 0.2s;"
+              :style="newTask.title.trim() ? 'background:#667eea;color:white;' : 'background:#e2e8f0;color:#a0aec0;cursor:not-allowed;'"
+            >
+              + Добавить задачу
+            </button>
+          </div>
         </div>
-        <button
-          @click="addTask"
-          style="align-self:flex-start;padding:10px 24px;background:#667eea;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
-        >
-          + Добавить задачу
-        </button>
       </div>
     </div>
 
@@ -61,113 +81,129 @@
       <div
         v-for="task in tasks"
         :key="task.id"
-        style="display:flex;flex-direction:column;padding:12px;margin-bottom:8px;background:white;border-radius:6px;border:1px solid #e2e8f0;"
+        style="display:flex;flex-direction:column;padding:16px;margin-bottom:12px;background:white;border-radius:12px;border:1px solid #e2e8f0;transition:box-shadow 0.2s;"
+        @mouseover="$event.currentTarget.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)'"
+        @mouseout="$event.currentTarget.style.boxShadow='none'"
       >
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="display:flex;align-items:center;gap:12px;">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;">
             <input
               type="checkbox"
               :checked="task.completed"
               @change="toggleTask(task.id)"
-              style="width:18px;height:18px;cursor:pointer;"
+              style="width:20px;height:20px;cursor:pointer;accent-color:#667eea;"
             />
-            <span :style="{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? '#a0aec0' : '#2d3748' }">
+            <span :style="{
+              fontSize: '16px',
+              fontWeight: task.completed ? '400' : '500',
+              textDecoration: task.completed ? 'line-through' : 'none',
+              color: task.completed ? '#a0aec0' : '#2d3748',
+            }">
               {{ task.title }}
             </span>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
             <span v-if="task.priority" :style="{
-              padding: '2px 8px',
-              borderRadius: '12px',
+              padding: '2px 10px',
+              borderRadius: '20px',
               fontSize: '12px',
-              background: task.priority === 'high' ? '#fc8181' : task.priority === 'medium' ? '#ecc94b' : '#48bb78',
-              color: 'white'
+              fontWeight: '500',
+              background: task.priority === 'high' ? '#fed7d7' : task.priority === 'medium' ? '#fefcbf' : '#c6f6d5',
+              color: task.priority === 'high' ? '#c53030' : task.priority === 'medium' ? '#975a16' : '#276749',
             }">
-              {{ task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢' }}
+              {{ task.priority === 'high' ? '🔴 Высокий' : task.priority === 'medium' ? '🟡 Средний' : '🟢 Низкий' }}
             </span>
-            <span v-if="task.deadline" style="font-size:12px;color:#a0aec0;">
+            <span v-if="task.deadline" style="font-size:13px;color:#718096;">
               📅 {{ formatDate(task.deadline) }}
             </span>
             <button
               @click="openEditModal(task)"
-              style="padding:4px 12px;background:#4299e1;color:white;border:none;border-radius:4px;cursor:pointer;"
+              style="padding:4px 10px;background:#ebf4ff;color:#3182ce;border:none;border-radius:6px;cursor:pointer;font-size:14px;transition:background 0.2s;"
+              @mouseover="$event.target.style.background='#bee3f8'"
+              @mouseout="$event.target.style.background='#ebf4ff'"
             >
               ✏️
             </button>
             <button
               @click="removeTask(task.id)"
-              style="padding:4px 12px;background:#fc8181;color:white;border:none;border-radius:4px;cursor:pointer;"
+              style="padding:4px 10px;background:#fff5f5;color:#e53e3e;border:none;border-radius:6px;cursor:pointer;font-size:14px;transition:background 0.2s;"
+              @mouseover="$event.target.style.background='#fed7d7'"
+              @mouseout="$event.target.style.background='#fff5f5'"
             >
-              Удалить
+              🗑️
             </button>
           </div>
         </div>
-        <div v-if="task.description" style="margin-top:8px;font-size:14px;color:#4a5568;padding-left:30px;">
+        <div v-if="task.description" style="margin-top:8px;font-size:14px;color:#4a5568;padding-left:32px;">
           {{ task.description }}
         </div>
       </div>
-      <p v-if="tasks.length === 0" style="color:#a0aec0;text-align:center;padding:40px;">
+      <p v-if="tasks.length === 0" style="color:#a0aec0;text-align:center;padding:40px;font-size:16px;">
         Нет задач. Добавьте первую!
       </p>
     </div>
 
     <!-- Модальное окно редактирования -->
-    <div v-if="isEditModalOpen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;">
-      <div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;">
-        <h3 style="margin-top:0;">Редактировать задачу</h3>
-        <div style="display:flex;flex-direction:column;gap:12px;">
+    <div v-if="isEditModalOpen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;">
+      <div style="background:white;padding:30px;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+        <h3 style="margin-top:0;font-size:22px;color:#2d3748;">Редактировать задачу</h3>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:20px;">
           <div>
-            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Название *</label>
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Название *</label>
             <input
               v-model="editTask.title"
               placeholder="Название задачи"
-              style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+              style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;"
             />
           </div>
           <div>
-            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Описание</label>
+            <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Описание</label>
             <textarea
               v-model="editTask.description"
               placeholder="Описание"
-              style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;min-height:80px;"
+              style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;min-height:80px;resize:vertical;"
             />
           </div>
-          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <div style="display:flex;flex-wrap:wrap;gap:16px;">
             <div style="flex:1;min-width:150px;">
-              <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Приоритет</label>
-              <select v-model="editTask.priority" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;">
+              <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Приоритет</label>
+              <select v-model="editTask.priority" style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;background:white;">
                 <option value="low">🟢 Низкий</option>
                 <option value="medium">🟡 Средний</option>
                 <option value="high">🔴 Высокий</option>
               </select>
             </div>
             <div style="flex:1;min-width:150px;">
-              <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Дедлайн</label>
+              <label style="display:block;font-weight:600;margin-bottom:6px;color:#2d3748;font-size:14px;">Дедлайн</label>
               <input
                 v-model="editTask.deadline"
                 type="date"
-                style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+                style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;"
               />
             </div>
           </div>
-          <div>
-            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Выполнена</label>
+          <div style="display:flex;align-items:center;gap:12px;">
             <input
               type="checkbox"
               v-model="editTask.completed"
-              style="width:18px;height:18px;cursor:pointer;"
+              style="width:20px;height:20px;accent-color:#667eea;cursor:pointer;"
             />
+            <label style="font-weight:500;color:#2d3748;font-size:14px;">Выполнена</label>
           </div>
           <div style="display:flex;gap:12px;margin-top:12px;">
             <button
               @click="saveEditTask"
-              style="flex:1;padding:10px;background:#667eea;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
+              style="flex:1;padding:12px;background:#667eea;color:white;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:background 0.2s;"
+              @mouseover="$event.target.style.background='#5a67d8'"
+              @mouseout="$event.target.style.background='#667eea'"
             >
               Сохранить
             </button>
             <button
               @click="closeEditModal"
-              style="flex:1;padding:10px;background:#e2e8f0;color:#2d3748;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
+              style="flex:1;padding:12px;background:#e2e8f0;color:#2d3748;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:background 0.2s;"
+              @mouseover="$event.target.style.background='#cbd5e0'"
+              @mouseout="$event.target.style.background='#e2e8f0'"
             >
               Отмена
             </button>
@@ -194,7 +230,6 @@ const newTask = ref({
   deadline: '',
 })
 
-// Редактирование
 const isEditModalOpen = ref(false)
 const editTask = ref({
   id: 0,
@@ -240,7 +275,6 @@ const toggleTask = (id: number) => {
   taskStore.toggleTask(id)
 }
 
-// ✅ Улучшенная функция открытия модалки
 const openEditModal = (task: any) => {
   const { id, title, completed, description = '', priority = 'medium', deadline = '' } = task
   editTask.value = { id, title, completed, description, priority, deadline }
