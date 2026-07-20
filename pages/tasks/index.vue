@@ -10,10 +10,9 @@
       <span style="color:#fc8181;">Активных: {{ pendingTasks }}</span>
     </div>
 
-    <!-- Форма добавления (с лейблами) -->
+    <!-- Форма добавления -->
     <div style="margin:20px 0;padding:20px;background:#f7fafc;border-radius:8px;">
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <!-- Название -->
         <div>
           <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Название *</label>
           <input
@@ -22,8 +21,6 @@
             style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
           />
         </div>
-
-        <!-- Описание -->
         <div>
           <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Описание</label>
           <textarea
@@ -32,8 +29,6 @@
             style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;min-height:80px;"
           />
         </div>
-
-        <!-- Приоритет и Дедлайн -->
         <div style="display:flex;gap:20px;flex-wrap:wrap;">
           <div style="flex:1;min-width:150px;">
             <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Приоритет</label>
@@ -52,8 +47,6 @@
             />
           </div>
         </div>
-
-        <!-- Кнопка -->
         <button
           @click="addTask"
           style="align-self:flex-start;padding:10px 24px;background:#667eea;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
@@ -96,6 +89,12 @@
               📅 {{ formatDate(task.deadline) }}
             </span>
             <button
+              @click="openEditModal(task)"
+              style="padding:4px 12px;background:#4299e1;color:white;border:none;border-radius:4px;cursor:pointer;"
+            >
+              ✏️
+            </button>
+            <button
               @click="removeTask(task.id)"
               style="padding:4px 12px;background:#fc8181;color:white;border:none;border-radius:4px;cursor:pointer;"
             >
@@ -110,6 +109,71 @@
       <p v-if="tasks.length === 0" style="color:#a0aec0;text-align:center;padding:40px;">
         Нет задач. Добавьте первую!
       </p>
+    </div>
+
+    <!-- Модальное окно редактирования -->
+    <div v-if="isEditModalOpen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;">
+      <div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;">
+        <h3 style="margin-top:0;">Редактировать задачу</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Название *</label>
+            <input
+              v-model="editTask.title"
+              placeholder="Название задачи"
+              style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+            />
+          </div>
+          <div>
+            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Описание</label>
+            <textarea
+              v-model="editTask.description"
+              placeholder="Описание"
+              style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;min-height:80px;"
+            />
+          </div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:150px;">
+              <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Приоритет</label>
+              <select v-model="editTask.priority" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;">
+                <option value="low">🟢 Низкий</option>
+                <option value="medium">🟡 Средний</option>
+                <option value="high">🔴 Высокий</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:150px;">
+              <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Дедлайн</label>
+              <input
+                v-model="editTask.deadline"
+                type="date"
+                style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:16px;"
+              />
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-weight:500;margin-bottom:4px;color:#2d3748;">Выполнена</label>
+            <input
+              type="checkbox"
+              v-model="editTask.completed"
+              style="width:18px;height:18px;cursor:pointer;"
+            />
+          </div>
+          <div style="display:flex;gap:12px;margin-top:12px;">
+            <button
+              @click="saveEditTask"
+              style="flex:1;padding:10px;background:#667eea;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
+            >
+              Сохранить
+            </button>
+            <button
+              @click="closeEditModal"
+              style="flex:1;padding:10px;background:#e2e8f0;color:#2d3748;border:none;border-radius:6px;cursor:pointer;font-size:16px;"
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -130,13 +194,23 @@ const newTask = ref({
   deadline: '',
 })
 
+// Редактирование
+const isEditModalOpen = ref(false)
+const editTask = ref({
+  id: 0,
+  title: '',
+  description: '',
+  priority: 'medium' as 'low' | 'medium' | 'high',
+  deadline: '',
+  completed: false,
+})
+
 const formatDate = (dateStr: string) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
   return date.toLocaleDateString('ru-RU')
 }
 
-// Загружаем задачи при монтировании страницы
 onMounted(() => {
   taskStore.fetchTasks()
 })
@@ -149,7 +223,6 @@ const addTask = () => {
       newTask.value.priority,
       newTask.value.deadline || undefined
     )
-    // Очищаем форму
     newTask.value = {
       title: '',
       description: '',
@@ -165,5 +238,34 @@ const removeTask = (id: number) => {
 
 const toggleTask = (id: number) => {
   taskStore.toggleTask(id)
+}
+
+const openEditModal = (task: any) => {
+  editTask.value = {
+    id: task.id,
+    title: task.title,
+    description: task.description || '',
+    priority: task.priority || 'medium',
+    deadline: task.deadline || '',
+    completed: task.completed,
+  }
+  isEditModalOpen.value = true
+}
+
+const closeEditModal = () => {
+  isEditModalOpen.value = false
+}
+
+const saveEditTask = async () => {
+  if (editTask.value.title.trim()) {
+    await taskStore.updateTask(editTask.value.id, {
+      title: editTask.value.title,
+      description: editTask.value.description || undefined,
+      priority: editTask.value.priority,
+      deadline: editTask.value.deadline || undefined,
+      completed: editTask.value.completed,
+    })
+    closeEditModal()
+  }
 }
 </script>
