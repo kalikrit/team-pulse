@@ -17,7 +17,8 @@
         <div style="font-size:14px;color:#718096;">Выполнено</div>
       </div>
       <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center;">
-        <div style="font-size:28px;font-weight:700;color:#fc8181;">{{ pendingTasks }}</div>
+        <!-- Меняем цвет с #fc8181 на #4299e1 -->
+        <div style="font-size:28px;font-weight:700;color:#4299e1;">{{ pendingTasks }}</div>
         <div style="font-size:14px;color:#718096;">Активных</div>
       </div>
     </div>
