@@ -4,7 +4,6 @@
       <h1 style="font-size:28px;font-weight:700;color:#2d3748;margin:0 0 8px;">📊 Дашборд</h1>
       <p style="color:#4a5568;margin-bottom:24px;">Обзор состояния задач</p>
 
-      <!-- Карточки статистики -->
       <StatsCards
         :total="totalTasks"
         :completed="completedTasks"
@@ -12,26 +11,20 @@
         :active="activeTasksCount"
       />
 
-      <!-- График и просроченные -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:30px;">
         <PriorityChart :tasks="tasks" />
         <OverdueTasks :tasks="overdueTasks" />
       </div>
 
-      <!-- Последние задачи -->
       <RecentTasks :tasks="recentTasks" />
     </div>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  ssr: false
-})
+definePageMeta({ ssr: false })
 
 import { useTaskStore } from '~/stores/task'
-
-// Явный импорт компонентов
 import StatsCards from '~/components/dashboard/StatsCards.vue'
 import OverdueTasks from '~/components/dashboard/OverdueTasks.vue'
 import PriorityChart from '~/components/dashboard/PriorityChart.vue'
@@ -44,6 +37,7 @@ const totalTasks = computed(() => taskStore.totalTasks)
 const completedTasks = computed(() => taskStore.completedTasks)
 const activeTasksCount = computed(() => tasks.value.filter(t => !t.completed).length)
 
+// ✅ Просроченные = невыполненные задачи с дедлайном меньше сегодня
 const overdueTasks = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -54,6 +48,7 @@ const overdueTasks = computed(() => {
     return deadline < today
   })
 })
+
 const overdueTasksCount = computed(() => overdueTasks.value.length)
 
 const recentTasks = computed(() => {
@@ -67,9 +62,6 @@ const recentTasks = computed(() => {
 })
 
 onMounted(() => {
-  console.log('📊 Дашборд: монтирование, загружаем задачи...')
-  taskStore.fetchTasks().then(() => {
-    console.log('📊 Дашборд: задачи загружены, количество:', tasks.value.length)
-  })
+  taskStore.fetchTasks()
 })
 </script>
