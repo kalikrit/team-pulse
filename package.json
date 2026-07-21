@@ -1,6 +1,6 @@
 {
   "name": "team-pulse",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,9 +19,11 @@
   "dependencies": {
     "@libsql/client": "^0.17.4",
     "@pinia/nuxt": "^0.5.4",
+    "chart.js": "^4.5.1",
     "drizzle-orm": "^0.45.2",
     "nuxt": "^3.12.4",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "vue-chart-3": "^4.0.1"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
