@@ -7,7 +7,7 @@
     </div>
 
     <!-- Статистика -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:20px 0 30px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:20px 0 24px;">
       <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center;">
         <div style="font-size:28px;font-weight:700;color:#2d3748;">{{ totalTasks }}</div>
         <div style="font-size:14px;color:#718096;">Всего</div>
@@ -20,6 +20,40 @@
         <div style="font-size:28px;font-weight:700;color:#fc8181;">{{ pendingTasks }}</div>
         <div style="font-size:14px;color:#718096;">Активных</div>
       </div>
+    </div>
+
+    <!-- Фильтры и поиск -->
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding:16px;background:#f7fafc;border-radius:12px;align-items:center;">
+      <div style="flex:1;min-width:150px;">
+        <input
+          v-model="searchQuery"
+          placeholder="🔍 Поиск по названию..."
+          style="width:100%;padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;"
+        />
+      </div>
+      <div style="min-width:120px;">
+        <select v-model="filterStatus" style="width:100%;padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;background:white;">
+          <option value="all">Все статусы</option>
+          <option value="active">Активные</option>
+          <option value="completed">Выполненные</option>
+        </select>
+      </div>
+      <div style="min-width:120px;">
+        <select v-model="filterPriority" style="width:100%;padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;background:white;">
+          <option value="all">Все приоритеты</option>
+          <option value="low">🟢 Низкий</option>
+          <option value="medium">🟡 Средний</option>
+          <option value="high">🔴 Высокий</option>
+        </select>
+      </div>
+      <button
+        @click="resetFilters"
+        style="padding:8px 16px;background:#e2e8f0;color:#2d3748;border:none;border-radius:8px;font-size:14px;cursor:pointer;transition:background 0.2s;"
+        @mouseover="$event.target.style.background='#cbd5e0'"
+        @mouseout="$event.target.style.background='#e2e8f0'"
+      >
+        Сбросить
+      </button>
     </div>
 
     <!-- Карточка формы добавления -->
@@ -76,10 +110,10 @@
       </div>
     </div>
 
-    <!-- Список задач -->
+    <!-- Список задач (отфильтрованный) -->
     <div>
       <div
-        v-for="task in tasks"
+        v-for="task in filteredTasks"
         :key="task.id"
         style="display:flex;flex-direction:column;padding:16px;margin-bottom:12px;background:white;border-radius:12px;border:1px solid #e2e8f0;transition:box-shadow 0.2s;"
         @mouseover="$event.currentTarget.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)'"
@@ -138,12 +172,12 @@
           {{ task.description }}
         </div>
       </div>
-      <p v-if="tasks.length === 0" style="color:#a0aec0;text-align:center;padding:40px;font-size:16px;">
-        Нет задач. Добавьте первую!
+      <p v-if="filteredTasks.length === 0" style="color:#a0aec0;text-align:center;padding:40px;font-size:16px;">
+        {{ tasks.length === 0 ? 'Нет задач. Добавьте первую!' : 'Нет задач, соответствующих фильтрам.' }}
       </p>
     </div>
 
-    <!-- Модальное окно редактирования -->
+    <!-- Модальное окно редактирования (без изменений) -->
     <div v-if="isEditModalOpen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;">
       <div style="background:white;padding:30px;border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
         <h3 style="margin-top:0;font-size:22px;color:#2d3748;">Редактировать задачу</h3>
@@ -223,6 +257,44 @@ const totalTasks = computed(() => taskStore.totalTasks)
 const completedTasks = computed(() => taskStore.completedTasks)
 const pendingTasks = computed(() => taskStore.pendingTasks)
 
+// Состояние фильтров
+const filterStatus = ref('all') // 'all' | 'active' | 'completed'
+const filterPriority = ref('all') // 'all' | 'low' | 'medium' | 'high'
+const searchQuery = ref('')
+
+// Вычисляемый список задач с применёнными фильтрами
+const filteredTasks = computed(() => {
+  let result = tasks.value
+
+  // Фильтр по статусу
+  if (filterStatus.value === 'active') {
+    result = result.filter(t => !t.completed)
+  } else if (filterStatus.value === 'completed') {
+    result = result.filter(t => t.completed)
+  }
+
+  // Фильтр по приоритету
+  if (filterPriority.value !== 'all') {
+    result = result.filter(t => t.priority === filterPriority.value)
+  }
+
+  // Поиск по названию (регистронезависимый)
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.trim().toLowerCase()
+    result = result.filter(t => t.title.toLowerCase().includes(query))
+  }
+
+  return result
+})
+
+// Сброс фильтров
+const resetFilters = () => {
+  filterStatus.value = 'all'
+  filterPriority.value = 'all'
+  searchQuery.value = ''
+}
+
+// Форма добавления
 const newTask = ref({
   title: '',
   description: '',
